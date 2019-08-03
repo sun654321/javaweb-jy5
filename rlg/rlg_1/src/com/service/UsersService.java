@@ -69,7 +69,6 @@ public class UsersService {
             uid = Integer.parseInt(uids); //字符串转换不了int，uid为空
 
         }catch (Exception e){
-            System.out.println(e);
             rs.setStatus(Const.bcs);
             rs.setMsg(Const.bcsmsg);
             return rs;
