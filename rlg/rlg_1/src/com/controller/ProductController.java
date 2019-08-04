@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet(name = "ProductServlet",value = "/manage/product/*")
-public class ProductServlet extends HttpServlet {
+@WebServlet(name = "ProductController",value = "/manage/product/*")
+public class ProductController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
       doGet(request,response);
     }
@@ -37,18 +37,16 @@ public class ProductServlet extends HttpServlet {
                 break;
              case "search":
                 //在这应该加一个判断，是否输入的是什么
-                        //根据name查询
+                        //根据name或id进行查询
                         rs = searchdo(request);
-                        //根据id查询
-                        rs1 = searchdo1(request);
-                        //输入id查询详细信息
-                        rs2 = searchdo2(request);
                         break;
                  case "set_sale_status":
 
                      rs = statusdo(request);
                      break;
-
+            case "save":
+                rs = savedo(request);
+                break;
                 }
 
 
@@ -61,8 +59,7 @@ public class ProductServlet extends HttpServlet {
 
         //返回响应的数据
         response.getWriter().write(rs.toString());
-        response.getWriter().write(rs1.toString());
-        response.getWriter().write(rs2.toString());
+
     }
 
 
@@ -87,13 +84,18 @@ public class ProductServlet extends HttpServlet {
         String pageNum = request.getParameter("pageNum");
         return ps.selectAll(pageSize, pageNum);
     }
-    //产品搜索
-    //根据姓名进行查询
+
+    //产品搜索根据姓名进行查询
     private ResponseCode searchdo(HttpServletRequest request) {
         String productName = request.getParameter("productName");
+        String productId = request.getParameter("productId");
+        ResponseCode  rs=null;
+        if(productName==null){
+           rs= ps.selectone1(productId);
 
-        ResponseCode rs= ps.selectone(productName);
-
+        }else{
+            rs= ps.selectone(productName);
+        }
         //获取session对象
         HttpSession session = request.getSession();
         session.setAttribute("product", rs.getData());
@@ -101,21 +103,18 @@ public class ProductServlet extends HttpServlet {
         return rs;
 
     }
-    //根据id进行查询
-    private ResponseCode searchdo1(HttpServletRequest request) {
-        String productId = request.getParameter("productId");
 
-        ResponseCode  rs1= ps.selectone1(productId);
 
-        //获取session对象
-        HttpSession session = request.getSession();
-        session.setAttribute("product", rs1.getData());
-        //调用业务层处理业务
-        return rs1;
-    }
+
+
+
+
 
 
    //上传照片
+
+
+
 
     //产品详情
     private ResponseCode searchdo2(HttpServletRequest request) {
@@ -131,7 +130,7 @@ public class ProductServlet extends HttpServlet {
     }
 
 
-//商品下架
+//商品上下架
 private ResponseCode statusdo(HttpServletRequest request) {
      String productId = request.getParameter("productId");
      String status = request.getParameter("status");
@@ -144,6 +143,29 @@ private ResponseCode statusdo(HttpServletRequest request) {
     return rs;
 
 }
+
+
+//更新产品
+private  ResponseCode savedo (HttpServletRequest request){
+    String categoryId = request.getParameter("categoryId");
+    String name = request.getParameter("name");
+    String subtitle = request.getParameter("subtitle");
+    String mainImage = request.getParameter("mainImage");
+    String subImages = request.getParameter("subImages");
+    String price = request.getParameter("price");
+    String status = request.getParameter("status");
+
+
+    ResponseCode rs = ps.selectAll(categoryId,name,subtitle,mainImage,price,status);
+    //获取session对象
+    HttpSession session = request.getSession();
+    session.setAttribute("product", rs.getData());
+    //调用业务层处理业务
+    return rs;
+
+}
+
+
 
     }
 

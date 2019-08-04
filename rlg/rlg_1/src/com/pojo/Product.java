@@ -7,7 +7,7 @@ private  int id;
 private  int  categoryid;
 private  String name;
 private   String  subtitle;
-private    Blob mainimage;
+private    String mainimage;
 private  int status;
 private  float  price;
 
@@ -43,11 +43,11 @@ private  float  price;
         this.subtitle = subtitle;
     }
 
-    public Blob getMainimage() {
+    public String getMainimage() {
         return mainimage;
     }
 
-    public void setMainimage(Blob mainimage) {
+    public void setMainimage(String mainimage) {
         this.mainimage = mainimage;
     }
 

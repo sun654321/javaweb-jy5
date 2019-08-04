@@ -13,13 +13,13 @@ import java.util.List;
 public class ProductDao {
 
 //查看商品列表
-    public List<Product> selectAll(String pageSize, String pageNum) {
+    public List<Product> selectAll(Integer pageSize, Integer pageNum) {
 
         QueryRunner qr = new QueryRunner(PoolUtil.getcom());
-        String sql = "select * from product ";
+        String sql = "select * from product limit ?,? ";
         List<Product> li = null;
         try {
-            li = qr.query(sql, new BeanListHandler<Product>(Product.class));
+            li = qr.query(sql, new BeanListHandler<Product>(Product.class),pageNum,pageSize);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -74,30 +74,57 @@ public class ProductDao {
 
     }
 
+    //上传照片
+
+
+
+
+
 //根据商品的id和状态进行查询
-        public Product selectone4(Integer productId, Integer status) {
+        public Product selectone4(Integer productId) {
             QueryRunner qr = new QueryRunner(PoolUtil.getcom());
-            String sql = "select * from product where id=? and status=? ";
+            String sql = "select * from product where id=? ";
             Product p = null;
             try {
-                p = qr.query(sql, new BeanHandler<Product>(Product.class), productId,status);
+                p = qr.query(sql, new BeanHandler<Product>(Product.class), productId);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             return p;
 
             }
-        public int updateByUid(Integer productId, Integer status) {
+           // 禁用商品
+        public int updateByUid(Integer productId,Integer status) {
         QueryRunner qr = new QueryRunner(PoolUtil.getcom());
-        String sql = "update product set status= ? where id = ?";
+
+        String sql = "update  product  set status=?  where id =? ";
         int row = 0;
         try {
-            row = qr.update(sql,new BeanHandler<Product>(Product.class), productId,status);
+             row = qr.update(sql,productId,status);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return row;
     }
+
+
+
+//更新商品
+public int selectone(String categoryId, String name, String subtitle, String mainImage, String price, String status) {
+    QueryRunner qr = new QueryRunner(PoolUtil.getcom());
+    String sql = "insert into product(categoryId,name,subtitle,mainImage,price,status) values (?,?,?,?,?,?) ";
+    int row=0;
+    try {
+        row = qr.update(sql,categoryId,name,subtitle,mainImage,price,status);
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return row;
+
+
+
+    }
+
 
 
 

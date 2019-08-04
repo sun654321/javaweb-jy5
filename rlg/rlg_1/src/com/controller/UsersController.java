@@ -69,7 +69,8 @@ public class UsersController extends HttpServlet {
         //获取参数
         String pageSize = request.getParameter("pageSize");
         String pageNum = request.getParameter("pageNum");
-        return uc.selectAll(pageSize, pageNum);
+       rs=uc.selectAll(pageSize, pageNum);
+        return rs;
     }
     //用户登录
     private ResponseCode logindo(HttpServletRequest request) {

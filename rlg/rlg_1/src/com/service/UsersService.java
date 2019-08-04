@@ -11,13 +11,16 @@ public class UsersService {
     private UsersDao ud = new UsersDao();
 
     //用户列表
-    public ResponseCode selectAll(String pageSize, String pageNum) {
-        if (pageSize == null || pageSize.equals("")) {
-            pageSize = "10";
+    public ResponseCode selectAll(String pageSize1, String pageNum1) {
+        if (pageSize1 == null || pageSize1.equals("")) {
+            pageSize1 = "10";
         }
-        if (pageNum == null || pageNum.equals("")) {
-            pageNum = "1";
+        if (pageNum1 == null || pageNum1.equals("")) {
+            pageNum1 = "1";
         }
+
+        Integer pageSize =Integer.parseInt(pageSize1)  ;
+        Integer  pageNum=Integer.parseInt(pageNum1)  ;
         List<Users> li = ud.selectAll(pageSize, pageNum);
 
         ResponseCode rs = new ResponseCode();
@@ -39,7 +42,7 @@ public class UsersService {
         Users u = ud.selectone(username, password);
         if (u == null) {
             rs.setStatus(1);
-            rs.setMsg("账号或密码错误");
+            rs.setMsg("没有改用户");
             return rs;
         }
         if (u.getType() != 1) {

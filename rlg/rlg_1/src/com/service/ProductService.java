@@ -10,13 +10,15 @@ public class ProductService {
     private ProductDao pd = new ProductDao();
 
     //商品列表
-  public ResponseCode selectAll(String pageSize, String pageNum) {
-        if (pageSize == null || pageSize.equals("")) {
-            pageSize = "10";
+    public ResponseCode selectAll(String pageSize1, String pageNum1) {
+        if (pageSize1 == null || pageSize1.equals("")) {
+            pageSize1 = "10";
         }
-        if (pageNum == null || pageNum.equals("")) {
-            pageNum = "1";
+        if (pageNum1 == null || pageNum1.equals("")) {
+            pageNum1 = "1";
         }
+        Integer pageSize =Integer.parseInt(pageSize1)  ;
+        Integer  pageNum=Integer.parseInt(pageNum1)  ;
         List<Product> li = pd.selectAll(pageSize, pageNum);
 
         ResponseCode rs = new ResponseCode();
@@ -28,20 +30,19 @@ public class ProductService {
 
     }
 
-//根据商品的名称进行查询
+    //根据商品的名称进行查询
     public ResponseCode selectone(String productName) {
         ResponseCode rs = new ResponseCode();
         if (productName == null || productName.equals("")) {
             rs.setStatus(1);
-            rs.setMsg("商品输入错误");
+            rs.setMsg("商品信息输入错误");
             return rs;
         }
-
         //查找是否有这样一个商品
         Product p = pd.selectone(productName);
         if (p == null) {
             rs.setStatus(1);
-            rs.setMsg("商品输入错误,没有查询到该商品");
+            rs.setMsg("该商品不存在");
             return rs;
         }
         rs.setStatus(0);
@@ -51,7 +52,7 @@ public class ProductService {
 
     }
 
-//根据商品的id进行查询
+    //根据商品的id进行查询
     public ResponseCode selectone1(String productId1) {
         ResponseCode rs = new ResponseCode();
         if (productId1 == null || productId1.equals("")) {
@@ -64,7 +65,7 @@ public class ProductService {
         try {
             productId = Integer.parseInt(productId1);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             rs.setStatus(0);
             rs.setMsg("输入的id为空");
             return rs;
@@ -74,7 +75,7 @@ public class ProductService {
         Product p = pd.selectone1(productId);
         if (p == null) {
             rs.setStatus(1);
-            rs.setMsg("商品的id输入错误");
+            rs.setMsg("该商品不存在");
             return rs;
         }
         rs.setStatus(0);
@@ -82,7 +83,11 @@ public class ProductService {
         return rs;
     }
 
-//根据id查询详细信息
+
+    //上传照片
+
+
+    //根据id查询详细信息
     public ResponseCode selectone2(String productId1) {
         ResponseCode rs = new ResponseCode();
         if (productId1 == null || productId1.equals("")) {
@@ -95,7 +100,7 @@ public class ProductService {
         try {
             productId = Integer.parseInt(productId1);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             rs.setStatus(0);
             rs.setMsg("输入的id为空");
             return rs;
@@ -105,7 +110,7 @@ public class ProductService {
         Product p = pd.selectone3(productId);
         if (p == null) {
             rs.setStatus(1);
-            rs.setMsg("商品的id输入错误");
+            rs.setMsg("该商品不存在");
             return rs;
         }
         rs.setStatus(0);
@@ -115,55 +120,90 @@ public class ProductService {
 
     }
 
-//商品的上下架
+    //商品的上下架有问题
     public ResponseCode selectone3(String productId1, String status1) {
         ResponseCode rs = new ResponseCode();
         //输入的参数为空
-        if (productId1 == null || productId1.equals("")||status1==null||status1.equals("")) {
-            rs.setStatus(2);
+        if (productId1 == null || productId1.equals("") || status1 == null || status1.equals("")) {
+            rs.setStatus(1);
             rs.setMsg("输入的值为空");
             return rs;
         }
 
         //字符串转数值
         Integer productId = null;
-        Integer status=null;
+        Integer status = null;
         try {
             productId = Integer.parseInt(productId1);
-            status=Integer.parseInt(status1);
-        }catch (Exception e){
-            rs.setStatus(3);
+            status = Integer.parseInt(status1);
+        } catch (Exception e) {
+            rs.setStatus(1);
             rs.setMsg("输入的商品信息有误");
             return rs;
         }
 
-        //查找是否有这样一个用户
-        Product p = pd.selectone4(productId,status);
+        //查找是否有这样一个商品
 
-        //如果商品不存在
-        if (p == null) {
-            rs.setStatus(4);
-            rs.setMsg("该商品不存在");
-            return rs;
+        Product  p = pd.selectone4(productId);
+
+            //如果商品不存在
+            if (p == null) {
+                rs.setStatus(1);
+                rs.setMsg("该商品不存在或状态码不正确");
+                return rs;
+            }
+            //商品禁用情况
+//            if (p.getStatus() == 1) {
+//                rs.setStatus(1);
+//               rs.setMsg("该商品已经被禁用");
+//               return rs;
+//            }
+            //禁用用户
+            int row = pd.updateByUid(productId, status);
+            if (row>0) {
+                rs.setStatus(0);
+                rs.setMsg("修改产品状态成功");
+                return rs;
+            }else{
+                rs.setStatus(1);
+                rs.setMsg("修改产品状态失败");
+                return rs;
+            }
+
         }
-        //商品禁用情况
-        if (p.getStatus() == 1) {
+
+
+
+    //更新产品有问题
+    public ResponseCode selectAll(String categoryId, String name, String subtitle, String mainImage, String price, String status) {
+        ResponseCode rs = new ResponseCode();
+        //输入的参数为空
+
+        if (categoryId == null || name == null || subtitle == null || mainImage == null || price == null || status == null) {
             rs.setStatus(1);
-            rs.setMsg("修改产品状态失败");
+            rs.setMsg("输入的值为空");
             return rs;
         }
-        //禁用用户
-        int row = pd.updateByUid(productId,status);
-        if (row <= 0) {
+        //添加商品
+
+        int   row = pd.selectone(categoryId, name, subtitle, mainImage, price, status);
+
+        //商品是否添加成功情况
+        if (row<=0) {
+            rs.setStatus(1);
+            rs.setMsg("添加产品失败");
+            return rs;
+        }else{
             rs.setStatus(0);
-            rs.setMsg("修改产品状态成功");
+            rs.setMsg("添加产品成功");
             return rs;
+
         }
-        rs.setStatus(0);
-        rs.setData(row);
-        return rs;
-
-
 
     }
+
+
+
 }
+
+
