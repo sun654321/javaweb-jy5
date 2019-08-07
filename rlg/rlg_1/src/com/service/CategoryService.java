@@ -3,9 +3,6 @@ package com.service;
 import com.common.ResponseCode;
 import com.dao.CategoryDao;
 import com.pojo.Getcategory;
-import com.pojo.Product;
-
-import java.awt.*;
 
 public class CategoryService {
 
@@ -80,8 +77,22 @@ public ResponseCode selectone2(String categoryId2,String categoryName) {
     }
 }
 
- //获取当前分类id及递归子节点categoryId
+    //获取当前分类id及递归子节点categoryId
+    //没有完成
+    public ResponseCode selectone3(String categoryId1) {
+        ResponseCode rs=new ResponseCode();
+        if(categoryId1==null){
+            rs.setStatus(1);
+            rs.setMsg("输入的值为空");
+            return rs;
+        }
 
+        Integer categoryId=Integer.parseInt(categoryId1);
+    //    cd.selectone(categoryId);
+        return rs;
+
+
+    }
 
 }
 

@@ -24,9 +24,7 @@ public class ProductService {
         ResponseCode rs = new ResponseCode();
         rs.setStatus(0);
         rs.setData(li);
-
         return rs;
-
 
     }
 
@@ -120,32 +118,20 @@ public class ProductService {
 
     }
 
-    //商品的上下架有问题
-    public ResponseCode selectone3(String productId1, String status1) {
+    //商品的下架
+    public ResponseCode selectone3(String productId1) {
         ResponseCode rs = new ResponseCode();
         //输入的参数为空
-        if (productId1 == null || productId1.equals("") || status1 == null || status1.equals("")) {
+        if (productId1 == null) {
             rs.setStatus(1);
             rs.setMsg("输入的值为空");
             return rs;
         }
-
         //字符串转数值
-        Integer productId = null;
-        Integer status = null;
-        try {
-            productId = Integer.parseInt(productId1);
-            status = Integer.parseInt(status1);
-        } catch (Exception e) {
-            rs.setStatus(1);
-            rs.setMsg("输入的商品信息有误");
-            return rs;
-        }
-
+        Integer  productId = Integer.parseInt(productId1);
         //查找是否有这样一个商品
 
         Product  p = pd.selectone4(productId);
-
             //如果商品不存在
             if (p == null) {
                 rs.setStatus(1);
@@ -153,39 +139,68 @@ public class ProductService {
                 return rs;
             }
             //商品禁用情况
-//            if (p.getStatus() == 1) {
-//                rs.setStatus(1);
-//               rs.setMsg("该商品已经被禁用");
-//               return rs;
-//            }
-            //禁用用户
-            int row = pd.updateByUid(productId, status);
+            if (p.getStatus() == 1) {
+                rs.setStatus(1);
+               rs.setMsg("该商品已经被禁用");
+               return rs;
+            }
+            //禁用
+            int row = pd.updateByUid1(productId);
             if (row>0) {
                 rs.setStatus(0);
                 rs.setMsg("修改产品状态成功");
                 return rs;
-            }else{
+            }
                 rs.setStatus(1);
                 rs.setMsg("修改产品状态失败");
                 return rs;
             }
 
-        }
-
-
-
-    //更新产品有问题
-    public ResponseCode selectAll(String categoryId, String name, String subtitle, String mainImage, String price, String status) {
+      //商品上架
+    public ResponseCode selectone3_1(String productId1) {
         ResponseCode rs = new ResponseCode();
         //输入的参数为空
+        if (productId1 == null) {
+            rs.setStatus(1);
+            rs.setMsg("输入的值为空");
+            return rs;
+        }
+        //字符串转数值
+        Integer  productId = Integer.parseInt(productId1);
+        //查找是否有这样一个商品
 
+        Product  p = pd.selectone4(productId);
+        //如果商品不存在
+        if (p == null) {
+            rs.setStatus(1);
+            rs.setMsg("该商品不存在或状态码不正确");
+            return rs;
+        }
+        int row = pd.updateByUid2(productId);
+        if (row>0) {
+            rs.setStatus(0);
+            rs.setMsg("修改产品状态成功");
+            return rs;
+        }else{
+            rs.setStatus(1);
+            rs.setMsg("修改产品状态失败");
+            return rs;
+        }
+
+    }
+
+
+
+    //更新产品
+    public ResponseCode selectone4(String categoryId, String name, String subtitle, String mainImage, String price, String status) {
+        ResponseCode rs = new ResponseCode();
+        //输入的参数为空
         if (categoryId == null || name == null || subtitle == null || mainImage == null || price == null || status == null) {
             rs.setStatus(1);
             rs.setMsg("输入的值为空");
             return rs;
         }
         //添加商品
-
         int   row = pd.selectone(categoryId, name, subtitle, mainImage, price, status);
 
         //商品是否添加成功情况
@@ -202,6 +217,32 @@ public class ProductService {
 
     }
 
+    //修改产品信息
+    public ResponseCode selectone5(String categoryId, String name, String subtitle, String mainImage, String price, String status, String id1) {
+        ResponseCode rs = new ResponseCode();
+        //输入的参数为空
+        if (categoryId == null || name == null || subtitle == null || mainImage == null || price == null || status == null||id1==null) {
+            rs.setStatus(1);
+            rs.setMsg("输入的值为空");
+            return rs;
+        }
+        Integer  id=Integer.parseInt(id1);
+        //添加商品
+        int   row = pd.selectone(categoryId, name, subtitle, mainImage, price, status,id);
+
+        //商品是否添加成功情况
+        if (row<=0) {
+            rs.setStatus(1);
+            rs.setMsg("修改产品失败");
+            return rs;
+        }else{
+            rs.setStatus(0);
+            rs.setMsg("修改产品成功");
+            return rs;
+
+        }
+
+    }
 
 
 }
